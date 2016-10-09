@@ -25,7 +25,7 @@ import java.util.Calendar;
 
 /*public class for shopgoodwill database */
 @SuppressWarnings("serial")
-public class Phase3 extends JFrame {
+public class ShopgoodwillDB extends JFrame {
  /*global String List that will hold all the category names for the database */
  /*the category names are the keys for the category ID numbers in categoryHashtable */
  public static java.util.List<String>            globalCategoryKeys = new ArrayList<String>();
@@ -41,7 +41,7 @@ public class Phase3 extends JFrame {
  /* searchText will hold the current text in the search text field  */
  public static JTextField                        searchText;
  /* ComboBox(drop down menu) that will list all the possible locations to search in*/
- public static JComboBox<String>                 locationCombo; 
+ public static JComboBox<String>                 locationCombo;
  /* ComboBox(drop down menu) that will list all the possible categories to search in*/
  public static JComboBox<String>                 categoryCombo;
  /* StringBuffer that will hold message to print at the end of search */
@@ -61,15 +61,15 @@ public class Phase3 extends JFrame {
  /* The values are the zipcodes that each key is assigned according to the zipcode.csv*/
  public static Hashtable<String, String>         locationZipcode = new Hashtable<String, String>();
  /* double needed to convert result to kilometers in haversine formula method*/
- public static final double                      R = 6372.8; 
+ public static final double                      R = 6372.8;
  /* String to hold the current location of the auction being saved */
  public static String                            currentLocation = new String();
  /* seriailized hashtable for data storage of all past searches */
  public static File                              serializedSearches = new File("searches.ser");
 
  /*call function to initialize shopgoodwill database GUI */
- public Phase3() {
-  initUI();      
+ public ShopgoodwillDB() {
+  initUI();
  }
 
  /*initialize values for shopgoodwill database GUI*/
@@ -204,24 +204,24 @@ public class Phase3 extends JFrame {
   panel.add(rebuildButton);
 
   /* perorm an action when user exits gui window */
-  frame.addWindowListener(new WindowAdapter() { 
+  frame.addWindowListener(new WindowAdapter() {
    @Override
    public void windowClosing(WindowEvent e) {
     try {
      /*if searchesHashtable has new data, save it to searchlog.txt */
-     if(!searchesHashtable.isEmpty())       
+     if(!searchesHashtable.isEmpty())
       outputSearchLog(new File("searchlog.txt"), searchesHashtable);
     } catch(IOException f) {
     }
-   }});          
+   }});
 
   /*wait and perform an action when search button is pressed */
   searchButton.addActionListener(new ActionListener() {
    public void actionPerformed(ActionEvent e) {
-    try {  
+    try {
      /* if user does not want to find a location within a certain amount of miles of a specific zipcode */
      if(milesText.getText().isEmpty() && zipcodeText.getText().isEmpty() ) {
-      /*process the search results*/ 
+      /*process the search results*/
       saveSearchResults();
       /*show  a message about the results have been processed*/
       showSearchMessage(searchMessage, 1);
@@ -231,23 +231,23 @@ public class Phase3 extends JFrame {
       searchMessage.setLength(0);
       /* save search data to searchesHashtable */
       serializeHashtable(searchesHashtable, serializedSearches);
-     } 
+     }
     /*if user decided to use the miles within zipcode search engine */
-    else { 
+    else {
      /* if zipcode.csv is not in current working directory inform the user */
-     if (zipcodeCSV == null) 
+     if (zipcodeCSV == null)
       JOptionPane.showMessageDialog(null, "Cannot use zipcode locator because zipcode.csv is not in current working directory");
-    /*check if miles field is empty  */ 
-     else if(milesText.getText().isEmpty()) 
+    /*check if miles field is empty  */
+     else if(milesText.getText().isEmpty())
       JOptionPane.showMessageDialog(null, "Enter a value for the number of miles within the zipcode");
      /* check if zipcode field is empty */
-     else if(zipcodeText.getText().isEmpty()) 
+     else if(zipcodeText.getText().isEmpty())
       JOptionPane.showMessageDialog(null, "Enter a value for the zipcode");
     /* check if miles field has a valid number */
-     else if(!(milesText.getText().matches("[1-9][0-9]{0,8}")))   
+     else if(!(milesText.getText().matches("[1-9][0-9]{0,8}")))
       JOptionPane.showMessageDialog(null, "Enter a valid number of miles");
     /* check if zipcode field has a zipcode that exists */
-     else if(isValidZipcode() == false) 
+     else if(isValidZipcode() == false)
       JOptionPane.showMessageDialog(null, "Zipcode is not valid");
      /* return search results acorrding to miles and zipcode entered along with search query and category */
      else {
@@ -264,7 +264,7 @@ public class Phase3 extends JFrame {
    } catch(IOException f) {
     }
    }
-  }); 
+  });
 
   /*wait and perform an action when the category button is pressed */
   categoryButton.addActionListener(new ActionListener() {
@@ -273,33 +273,33 @@ public class Phase3 extends JFrame {
     createCategoryTable();
    }
   });
-  
+
   /*wait and perform an action when the location button is pressed */
   locationButton.addActionListener(new ActionListener() {
    public void actionPerformed(ActionEvent e) {
-  /*display a table with location names and their ID numbers */ 
+  /*display a table with location names and their ID numbers */
     createLocationTable();
    }
   });
-  
+
   /*wait and perform an action when the rebuild button is pressed */
   rebuildButton.addActionListener(new ActionListener() {
    public void actionPerformed(ActionEvent e) {
     /* if there is no data storage file in current working directory show inform user */
-    if(searchesHashtable.isEmpty()) 
+    if(searchesHashtable.isEmpty())
      JOptionPane.showMessageDialog(null, "No data storage(searches.ser) in current working directory");
    /* process and save all auctions saved in the data storage */
     else
      try {
-      int option; 
+      int option;
       /* ask user if they are sure about rebuilding database*/
       option = JOptionPane.showConfirmDialog(null, "Are you sure you want to rebuild the database?", "Message",  JOptionPane.YES_NO_OPTION);
       /* rebuild database if user presses yes button, otherwise do nothing*/
       if(option == JOptionPane.YES_OPTION) {
-       rebuildDatabase(); 
+       rebuildDatabase();
        showSearchMessage(searchMessage, 3);
        searchMessage.setLength(0);
-      } 
+      }
       else
         ;
      //serializeHashtable(searchesHashtable, serializedSearches);
@@ -329,13 +329,13 @@ public class Phase3 extends JFrame {
 
   /* flag to check whether latitude was found or not */
   boolean notFound = true;
-  
-  /* iterate through zipcodCSV array*/    
+
+  /* iterate through zipcodCSV array*/
   for(int i = 0; i < zipcodeCSV.length; i++) {
    /* if row is not empty */
    if(zipcodeCSV.length != 1) {
     /* if zipcode matches and latitude was not found*/
-    if(notFound && ((zipcodeCSV[i][0]).replaceAll("\"", "")).equals(zipcode)) { 
+    if(notFound && ((zipcodeCSV[i][0]).replaceAll("\"", "")).equals(zipcode)) {
      /* get latitude from zipcodeCSV array */
      latitude = (zipcodeCSV[i][3]).replaceAll("\"", "");
      /* latitude was found */
@@ -344,7 +344,7 @@ public class Phase3 extends JFrame {
    }
    }
   }
-  
+
   /* return latitude */
   return latitude;
  }
@@ -376,13 +376,13 @@ public class Phase3 extends JFrame {
  /* checks to see if zipcode entered into the zipcode is an existing zipcode in the zipcode.csv file */
  public static boolean isValidZipcode() {
   /* iterate through zipcodeCSV*/
-  for(int j = 0; j < zipcodeCSV.length; j++) { 
+  for(int j = 0; j < zipcodeCSV.length; j++) {
   /* return true if there is a match */
   if( ( (zipcodeCSV[j][0]).replaceAll("\"", "")     ).equals(zipcodeText.getText()) )
     return true;
   }
- 
-  return false; 
+
+  return false;
  }
 
  /* use auction ID numbers stored in data storage to retrieve and process all past search results */
@@ -396,13 +396,13 @@ public class Phase3 extends JFrame {
 
     /* connect to the auction URL*/
     Document doc = Jsoup.connect(URL).get();
-   
+
     /* get the entire html page in one element*/
     Element body = doc.getElementsByTag("html").first();
-   
+
     /*get the user's current working directory */
     String workingDirectory = System.getProperty("user.dir");
-   
+
     /*create a directory to for all auctions if it doesn't exist */
     File auctionDirectory = new File(workingDirectory + "/Auctions");
 
@@ -470,7 +470,7 @@ public class Phase3 extends JFrame {
    /* a append a string to the searchMessage that says location of the auction*/
    searchMessage.append("Auction #" + auctionDir.getName() + " was saved to " + auctionDir.getAbsolutePath() + " with " + numberOfImages + " images" + '\n');
   }
-  } 
+  }
   catch(IOException e) {
   }
  }
@@ -491,7 +491,7 @@ public class Phase3 extends JFrame {
    textArea.setText("Your search for " + searchTerms + " in category:" + categoryCombo.getSelectedItem() + " within " +
    milesText.getText() + " miles of zipcode:" + zipcodeText.getText() +  " returned " + searchResults + " results" + '\n' + searchMessage.toString());
   /* */
-  else if(typeOfMessage == 3) 
+  else if(typeOfMessage == 3)
     textArea.setText(searchMessage.toString());
   /*message is not editiable by user */
   textArea.setEditable(false);
@@ -520,16 +520,16 @@ public class Phase3 extends JFrame {
 
   /* set a container for the panel*/
   panel.setLayout(new BorderLayout());
-  
+
   /* add panel to the container */
   frame.getContentPane().add(panel);
 
   /*create an array with the necessary names for the columns needed for the table constructor */
   String columnNames[] = {"Category", "ID Number"};
 
-  /* create a 2D array with the number of rows equal to the size of the category hashtable */ 
+  /* create a 2D array with the number of rows equal to the size of the category hashtable */
   String dataPair[][] = new String[categoryHashtable.size()][];
-  
+
   /* current index for the dataPair array that will increase every iteration */
   int index = 0;
 
@@ -537,28 +537,28 @@ public class Phase3 extends JFrame {
   for(String key :globalCategoryKeys) {
    /* use key to get value in category Hashtable */
    String value = categoryHashtable.get(key);
-  
+
    /* create an array using the key and value and enter that array into the 2D dataPair array */
    String pair[]  = {key, value};
    dataPair[index] = pair;
-   
+
    /*increase index by one */
    index++;
   }
-   
+
   /* create a new table using the above choosen column names and filled with the dataPair values */
   JTable table = new JTable(dataPair, columnNames);
-  
+
   /* create a  scrollable panel for the table */
   JScrollPane scrollPane = new JScrollPane(table);
   /* add a scrollable panel to the already existing panel */
   panel.add(scrollPane, BorderLayout.CENTER);
-  
+
   /*set the width for the columns, the category name column should be wider than the category ID number column*/
   table.getColumnModel().getColumn(0).setPreferredWidth(800);
   table.getColumnModel().getColumn(1).setPreferredWidth(120);
  }
- 
+
  /*create a JTable with the names of all the locations/sellers and their ID numbers */
  public static void createLocationTable() {
   /* create an instance of a frame and name it "Location Table" */
@@ -571,7 +571,7 @@ public class Phase3 extends JFrame {
   frame.setLocationRelativeTo(null);
   /* make window visible*/
   frame.setVisible(true);
- 
+
   /* create a JPanel and add it to the frame*/
   JPanel panel = new JPanel();
   frame.add(panel);
@@ -579,13 +579,13 @@ public class Phase3 extends JFrame {
   /* set a container for the panel*/
   panel.setLayout(new BorderLayout());
   frame.getContentPane().add(panel);
-    
+
   /*create an array with the necessary names for the columns needed for the table constructor */
   String columnNames[] = {"Location", "ID Number"};
 
   /* create a 2D array with the number of rows equal to the size of the category hashtable */
   String dataPair[][] = new String[locationHashtable.size()][];
-  
+
   /* current index for the dataPair array that will increase every iteration */
   int index = 0;
 
@@ -597,14 +597,14 @@ public class Phase3 extends JFrame {
    /* create array using the  key and value and enter that array into 2D dataPair array */
    String pair[]  = {key, value};
    dataPair[index] = pair;
-   
+
    /* increase index by one */
    index++;
   }
 
   /* create a new table using the above choosen column names and filled with dataPair values */
   JTable table = new JTable(dataPair, columnNames);
-  
+
   /* create scrollable panel for table */
   JScrollPane scrollPane = new JScrollPane(table);
   /* add scrollable panel to the  already existing panel */
@@ -622,16 +622,16 @@ public class Phase3 extends JFrame {
   try {
  /* get the current selected item in the category Combobox and use it to get the category ID number from categoryHashtbale*/
    String catKey    = categoryCombo.getSelectedItem().toString();
-   String catID     =  categoryHashtable.get(catKey); 
+   String catID     =  categoryHashtable.get(catKey);
  /* get the curren selected item in the location Combobox and use it to get the location ID number from locationHashtbale*/
    String sellerKey =  locationCombo.getSelectedItem().toString();
    String sellerID  = locationHashtable.get(sellerKey);
- 
+
    /* get current location to save to searchesHashtable */
    currentLocation = sellerKey;
 
    /*get the current text in the search field so it can be used in the URL */
-   String itemTitle = searchText.getText(); 
+   String itemTitle = searchText.getText();
 
    /* save the current text in the search field so it can be used in the message */
    searchTerms      = searchText.getText();
@@ -639,21 +639,21 @@ public class Phase3 extends JFrame {
    /* replace the spaces in the the search query with '+', as needed for the URL */
    String itemTitle2 = itemTitle.replace(" ", "+");
 
-   /* used to go the first page of the search results */ 
+   /* used to go the first page of the search results */
    int auctionPage = 1;
 
   /* do not anything if all search query is empty and categeory = "All Categories" and location = "All Sellers" */
   /* this returns an error on the shopgoodwill website*/
-  if(searchText.getText().isEmpty() && categoryCombo.getSelectedItem().equals("All Categories") && 
+  if(searchText.getText().isEmpty() && categoryCombo.getSelectedItem().equals("All Categories") &&
    locationCombo.getSelectedItem().equals("All Sellers"))
    ;
-   
-   else 
-    while(true) { 
+
+   else
+    while(true) {
     /*connect to shopgoodwill using current search query, location, categories, and page number */
-     Document doc = Jsoup.connect("http://www.shopgoodwill.com/search/SearchKey.asp?itemtitle=" + 
+     Document doc = Jsoup.connect("http://www.shopgoodwill.com/search/SearchKey.asp?itemtitle=" +
       itemTitle2  + "&catID=" + catID + "&sellerid=" + sellerID + "&page=" + auctionPage).get();
-  
+
      /*get everything in first div tag of class "mainbluebox" */
      Element mainbluebox = doc.select("div.mainbluebox").first();
      /*get elements in tag tbody (this is where auction links are kept */
@@ -662,27 +662,27 @@ public class Phase3 extends JFrame {
      Elements auctionLinks = tbody.select("a[href]");
 
      /* if there are are no auction links, exit method */
-     if(auctionLinks.isEmpty()) 
+     if(auctionLinks.isEmpty())
       break;
-    
+
      /* iterate through each 'a' tag */
      for(Element link: auctionLinks) {
       /* pass a href attributes (auction URLs) in 'a' tags to the method */
       saveAuctionInformation(link.attr("href"));
       /* increase the number of search results by 1 (this is needed for the end of search message) */
       searchResults = searchResults + 1;
-     }   
-    
+     }
+
      /* move on to the next page of search results*/
      auctionPage = auctionPage + 1;
     }
   } catch(IOException e) {
   }
  }
-  
+
  /* auction directory will be created in user's current working directory and store all auction that were searched for*/
  /* create a directory for each auction, the directory name will be the auction ID number */
- /* each auction directory will have a file with all text from auction page and all the auction item images*/ 
+ /* each auction directory will have a file with all text from auction page and all the auction item images*/
  public static void saveAuctionInformation(String URL) throws MalformedURLException, IOException {
   try {
    /* connect to the auction URL that was passed from the previous method*/
@@ -693,37 +693,37 @@ public class Phase3 extends JFrame {
    String workingDirectory = System.getProperty("user.dir");
    /*create a directory to for all auctions if it doesn't exist */
    File auctionDirectory = new File(workingDirectory + "/Auctions");
-   
+
    /* create auction directory if doesn't exist */
-   if(!auctionDirectory.exists()) 
+   if(!auctionDirectory.exists())
     auctionDirectory.mkdir();
 
    /*get starting index for the name of the auction HTML file in the URL */
    int index = URL.lastIndexOf('/');
- 
+
    /* create a new directory with the name of the auction ID number*/
    File auctionDir = new File(auctionDirectory.getName() + '/' + URL.substring(URL.length() - 13, URL.length() - 5));
    auctionDir.mkdir();
 
    /* a append a string to the searchMessage that says location of the auction*/
    searchMessage.append("Auction #" + auctionDir.getName() + " was saved to " + auctionDir.getAbsolutePath() + '\n');
-   
+
     /*get the name of the HTML file for the auction*/
    String filename = URL.substring(index + 1, URL.length() - 5) + ".txt";
- 
+
     /* create a BufferedWriter to write to the file */
-   String filenm = new String(workingDirectory + '/' + auctionDirectory.getName() + '/' + auctionDir.getName() + '/' +  
-   filename);   
+   String filenm = new String(workingDirectory + '/' + auctionDirectory.getName() + '/' + auctionDir.getName() + '/' +
+   filename);
    File output = new File(filenm);
    FileWriter fw = new FileWriter(output, false);
    BufferedWriter bw = new BufferedWriter(fw);
    /* write all the text from the auction page to the file */
-   bw.write(body.text() + '\n'); 
-  
+   bw.write(body.text() + '\n');
+
    /*get current date and time to save to searches data storage */
    DateFormat Dformat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
    Calendar calendar = Calendar.getInstance();
-  
+
    /*display to the prompt that the file was saved and its location*/
    System.out.println(filename + " was saved to " + auctionDir.getAbsolutePath());
 
@@ -752,18 +752,18 @@ public class Phase3 extends JFrame {
 
     /*get the filename of the URL */
     String imageFilename = (imageSource.toString()).substring(imageURLIndex + 1);
-    
+
      /*print that the file was saved and its location to the prompt */
     System.out.println(imageFilename + " was saved to " +  auctionDir.getAbsolutePath());
-    
+
     /* write the image to the filename in its directory */
-    ImageIO.write(imageFile, "JPG",new File(workingDirectory + '/' + auctionDirectory.getName() + '/' + auctionDir.getName()    + '/'  + imageFilename));   
+    ImageIO.write(imageFile, "JPG",new File(workingDirectory + '/' + auctionDirectory.getName() + '/' + auctionDir.getName()    + '/'  + imageFilename));
    numberOfImages++;
   }
- 
+
 /* save auction number and information about auction to searchesHashtable*/
 searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Auction #" + auctionDir.getName() + " was found using search terms:" +  searchText.getText() + " in category:" + categoryCombo.getSelectedItem().toString() + " at location:" +  currentLocation + " and was saved to " + auctionDir.getAbsolutePath() + " with " +  numberOfImages + " images on " + Dformat.format(calendar.getTime()) + '\n');
-  
+
   } catch(IOException e) {
   }
  }
@@ -787,8 +787,8 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
 
   /* get the latitude and longitude of the zipcode the user entered */
   String latitude1 = new String();
-  String longitude1 = new String();  
-  latitude1 = getZipcodeLatitude(zipcodeText.getText()); 
+  String longitude1 = new String();
+  latitude1 = getZipcodeLatitude(zipcodeText.getText());
   longitude1 = getZipcodeLongitude(zipcodeText.getText());
 
   /* convert the latitude and longitude of the zipcode to doubles */
@@ -806,20 +806,20 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
 
   /* get the first page of auctions */
    int auctionPage = 1;
-     
+
    /* get the zipcode of the location */
    String locationString =  location;
-   String zipcode =  locationZipcode.get(locationString);    
-   
+   String zipcode =  locationZipcode.get(locationString);
+
    /* get the latitude and longitude of the zipcode */
    String latitude2 = getZipcodeLatitude(zipcode);
    String longitude2 = getZipcodeLongitude(zipcode);
-  // System.out.println(latitude2 + "  " +  longitude2);  
+  // System.out.println(latitude2 + "  " +  longitude2);
 
    /* convert the longitude and the latitude to doubles */
    double lat2 = Double.parseDouble(latitude2);
    double lon2 = Double.parseDouble(longitude2);
- 
+
   /* convert the number of miles within the zipcode to an integer */
    int milesWithin = Integer.parseInt(milesText.getText());
 
@@ -831,7 +831,7 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
     /*connect to shopgoodwill using current search query, location, categories, and page number */
      Document doc = Jsoup.connect("http://www.shopgoodwill.com/search/SearchKey.asp?itemtitle=" +
       itemTitle2  + "&catID=" + catID + "&sellerid=" + sellerID + "&page=" + auctionPage).get();
- 
+
     /*get everything in first div tag of class "mainbluebox" */
      Element mainbluebox = doc.select("div.mainbluebox").first();
     /*get elements in tag tbody (this is where auction links are kept */
@@ -842,57 +842,57 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
      /* if there are are no auction links, exit method */
      if(auctionLinks.isEmpty())
       auctionLinkAvailable = false;
-     
+
       else {
      /* iterate through each 'a' tag */
      for(Element link: auctionLinks) {
      /* pass a href attributes (auction URLs) in 'a' tags to the method */
       saveAuctionInformation(link.attr("href"));
      /* increase the number of search results by 1 (this is needed for the end of search message) */
-      searchResults = searchResults + 1; 
+      searchResults = searchResults + 1;
       }
      }
 
      /* move on to the next page of search results*/
      auctionPage = auctionPage + 1;
-    } 
+    }
    }
   }
- } 
- } catch(IOException e) { 
+ }
+ } catch(IOException e) {
   }
    catch(NumberFormatException n) {
-  }  
- } 
+  }
+ }
 
  /*connect to shopgoodwill and load information to category and location hashtabels */
  public static void GetInformation(Hashtable<String, String> category, Hashtable<String, String> location) throws MalformedURLException, IOException {
   try {
    /* connect to shopgoodwill search and get webpage as document */
-   Document doc = Jsoup.connect("http://www.shopgoodwill.com/search/").get(); 
+   Document doc = Jsoup.connect("http://www.shopgoodwill.com/search/").get();
 
    /* get parent elements by id that indicates if they are a category or seller/location */
    Element parentTagOfCategories = doc.getElementById("catid");
    Element parentTagOfLocations = doc.getElementById("SellerID");
-  
+
    /* get all the individual elements in the */
    Elements categories = parentTagOfCategories.children();
    Elements locations = parentTagOfLocations.children();
- 
+
    /* iterate through tags for each category and get their name and value for each attribute (key and value for Hashtbale)*/
-   for(Element c: categories) 
+   for(Element c: categories)
     category.put(c.text(), c.attr("value"));
-  
+
    /* iterate through tags for each location/seller and get their name and value attribute (key and value for Hashtbale*/
    for(Element l: locations)
     location.put(l.text(), l.attr("value"));
 
   } catch(IOException e) {
   }
- } 
+ }
 
  /* return a list of the keys in the hashtable in alphabetical order */
- public static List<String> sortKeys(Hashtable<String, String> htable) { 
+ public static List<String> sortKeys(Hashtable<String, String> htable) {
   /*get the keys in a hashtable */
   Enumeration<String> keys = htable.keys();
   /* put the hashtable keys in a list*/
@@ -903,14 +903,14 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
  }
 
  /* output the keys and values of a hashtable to a text file */
- public static void outputKeysValues(Hashtable<String, String> htable, List<String> keys, File output) throws IOException { 
+ public static void outputKeysValues(Hashtable<String, String> htable, List<String> keys, File output) throws IOException {
   try {
    /* create a BufferedWriter to filename that was passed to method*/
    FileWriter fw = new FileWriter(output, false);
-   BufferedWriter bw = new BufferedWriter(fw); 
+   BufferedWriter bw = new BufferedWriter(fw);
    /* use list of keys to iterate through hashtable and get their values*/
    /* write keys and values to the BufferedWriter */
-   for(String k: keys) 
+   for(String k: keys)
     bw.write(k + " value:" + htable.get(k)  + '\n');
    /* close BufferedWriter */
    bw.close();
@@ -927,26 +927,26 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
    /* create a BufferedWriter for the created file*/
    FileWriter fw = new FileWriter(file.getName(), false);
    BufferedWriter bw = new BufferedWriter(fw);
- 
+
    /* connect to http://www.shopgoodwill.com/search/ URL and create a BufferedReader for Webpage */
-   BufferedReader br =  new BufferedReader(new InputStreamReader(new URL("http://www.shopgoodwill.com/search/").openStream())   );  
-   
+   BufferedReader br =  new BufferedReader(new InputStreamReader(new URL("http://www.shopgoodwill.com/search/").openStream())   );
+
    /* read Webpage line by line*/
-   String line = br.readLine(); 
-  
+   String line = br.readLine();
+
    /* While there is still a line left to read, write the line to BufferedWriter and read nextline */
    while(line != null) {
     bw.write(line + '\n');
     line = br.readLine();
    }
-  
+
    /* close BufferedReader and BufferedWriter */
    br.close();
    bw.close();
   } catch(IOException e) {
   }
  }
-  
+
  /* serialize Hashtable  */
  /* serialized Hashtables are used for the purpose of persistent data storage */
  public static void serializeHashtable(Hashtable<String, String> htable, File file) {
@@ -994,45 +994,45 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
   /* get zipcode.csv from current working directory  */
   BufferedReader CSVFile = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/zipcode.csv"));
 
-  /* read each row from CSV file and store it in a string */  
+  /* read each row from CSV file and store it in a string */
   LinkedList<String[]> rows = new LinkedList<String[]>();
   String dataRow = CSVFile.readLine();
-   
+
   /*seperate the columns in each row */
-  while ((dataRow = CSVFile.readLine()) != null) 
+  while ((dataRow = CSVFile.readLine()) != null)
    rows.addLast(dataRow.split(","));
-  
+
   /* convert the rows and columns into 2D array and put value in zipcodeCSV */
   zipcodeCSV = rows.toArray(new String[rows.size()][]);
   } catch(IOException e) {
   }
- } 
- 
+ }
+
  /* get the zipcode for every location and put in locationZipcode hashtable */
  public static void getZipcodeLocations() {
   /* iterate throug globalLocationKeys  */
   for(String location: globalLocationKeys) {
     /* if key is not equal to all sellers  */
    if(!(location.equals("All Sellers"))) {
-   
-   /* get first to two letters of string which will be the initials of a state, for example: NY*/ 
+
+   /* get first to two letters of string which will be the initials of a state, for example: NY*/
    String state = location.substring(0, 2);
-   
+
    /* get beginning and end index of city name in string*/
    int cityStart = location.indexOf("-");
    int cityEnd = location.indexOf("-", cityStart + 1);
-   
+
    /* get the name of the city */
    String city = location.substring(cityStart + 2, cityEnd - 1);
- 
+
    /* special case for St.Louis because it is spelled "St.Louis" by shopgoodwill and "Saint Louis" in zipcode.csv*/
    /* change name to match zipcode.csv */
-   if(city.equals("St. Louis")) 
+   if(city.equals("St. Louis"))
     city = "Saint Louis";
-   
-   /* flag for when zipcode is found*/ 
+
+   /* flag for when zipcode is found*/
    boolean notFound = true;
-   
+
    /* iterate through zipcode.csv rows */
    for(int i = 0; i < zipcodeCSV.length; i++) {
     /* if row was no empty */
@@ -1040,12 +1040,12 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
      /* if zipcode was not found and there is a match*/
      if(notFound && (zipcodeCSV[i][1]).replaceAll("\"", "").equals(city) && (zipcodeCSV[i][2]).replaceAll("\"", "").equals(state)) {
       /* enter location and its zipocode in locationZipcode hashtable*/
-       locationZipcode.put(location, (zipcodeCSV[i][0]).replaceAll("\"", ""));    
+       locationZipcode.put(location, (zipcodeCSV[i][0]).replaceAll("\"", ""));
        /* zipcode was found set flag to false */
-       notFound = false;  
+       notFound = false;
       }
      }
-    } 
+    }
    }
   }
  }
@@ -1057,13 +1057,13 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
    /* create a BufferedWriter to filename that was passed to method*/
    FileWriter fw = new FileWriter(output, false);
    BufferedWriter bw = new BufferedWriter(fw);
-   
+
    /* iterate through hashtable table (searchesHashtable) */
-   Set<String> keys = htable.keySet(); 
+   Set<String> keys = htable.keySet();
    for(String key: keys)
      /*write value(search information) to file */
      bw.write(htable.get(key));
-   
+
    /* close stream */
    bw.close();
   } catch(IOException e) {
@@ -1080,16 +1080,16 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
    /* create files to store serialized data for persistent data storage*/
    File serializedCategory = new File("location.ser");
    File serializedLocation = new File("category.ser");
-   
+
    /* create file to out saved auction information */
    File searchLog          = new File("searchlog.txt");
 
    /* if serialized hashtable (serializedSearches) exists, deserialize it and output its information to searchLog*/
    if(serializedSearches.exists()) {
     searchesHashtable = deserializeHashtable(serializedSearches);
-    outputSearchLog(searchLog, searchesHashtable); 
+    outputSearchLog(searchLog, searchesHashtable);
    }
-   
+
    /*if serialized category and location hashtables exist, deserialize and store their data in hashtables  */
    if((serializedCategory).exists() && (serializedLocation).exists()) {
      category = deserializeHashtable(serializedCategory);
@@ -1098,35 +1098,35 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
 
    /* else use getInformation fill category, location hashtables with data from shopgoodwill */
    /* serialize the hashtables */
-   else { 
-    GetInformation(category, location);   
+   else {
+    GetInformation(category, location);
     serializeHashtable(category, serializedCategory);
     serializeHashtable(location, serializedLocation);
    }
-   
+
    /* String lists that will hold category/location hashtable keys */
    /* sort keys */
    java.util.List<String> categoryKeys = sortKeys(category);
    java.util.List<String> locationKeys = sortKeys(location);
 
    /*create files to output list of categories and locations to */
-   File outputCategory = new File("categories.txt"); 
+   File outputCategory = new File("categories.txt");
    File outputLocation = new File("locations.txt");
 
    /* output list of categories and locations */
-   outputKeysValues(category, categoryKeys, outputCategory); 
+   outputKeysValues(category, categoryKeys, outputCategory);
    outputKeysValues(location, locationKeys, outputLocation);
-   
+
    /* save html of shopgoodwill search page to current working directory */
    GetSearchHTML();
 
    /* static string lists now have sorted category/location keys*/
    globalCategoryKeys = categoryKeys;
    globalLocationKeys = locationKeys;
-  
+
    /* static hashtbales are now equal to category/location hashtbales*/
    categoryHashtable = category;
-   locationHashtable = location; 
+   locationHashtable = location;
 
    /* if zipcode.csv file exists in current directory */
    File zipcodeFile = new File(System.getProperty("user.dir")  + "/zipcode.csv");
@@ -1138,11 +1138,11 @@ searchesHashtable.put(URL.substring(URL.length() - 13, URL.length() - 5), "Aucti
     getZipcodeLocations();
    }
 
-   /* create instance of Phase3(GUI) and run it */
+   /* create instance of ShopgoodwillDB(GUI) and run it */
    EventQueue.invokeLater(new Runnable() {
     @Override
     public void run() {
-     Phase3 ex = new Phase3();
+     ShopgoodwillDB ex = new ShopgoodwillDB();
     }
    });
 
